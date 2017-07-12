@@ -48,6 +48,15 @@ curl -XPUT http://elasticsearch.example.com/_template/1seo -d '
         "hash": {
           "type": "string"
         },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "image": {
+          "type": "string"
+        },
         "body": {
           "type": "string",
           "index": "no",
@@ -97,19 +106,29 @@ module.exports = ( options ) => {
     return url.replace( /[\?#]*$/gi, '' );
   };
 
-  var extractMeta = ( name, str ) => {
-    var reg = new RegExp( '<meta(?: [^>]+)?\s*=\s*[\'"]+' + 'image' + '[\'"]+[^>]*', 'gi' );
-    var rst = reg.exec( str );
-    if ( rst[ 0 ] ) {
-      var res = /content\s*=\s*['"]([^'">]+)/gi.exec( rst[ 0 ] );
-      if ( rest[ 1 ] ) {
-        return res[ 1 ];
-      }
+  var extractTitle = ( str ) => {
+    var tres = str.match( /<title>[^<]*/gi );
+    if ( tres && tres[ 0 ] ) {
+      return tres[ 0 ].substr( 7 );
     }
+
     return "";
   }
 
-  var parseBody = ( req ) => {
+  var extractMeta = ( name, str ) => {
+    var reg = new RegExp( '<meta(?: [^>]+)?\s*=\s*[\'"]+' + name + '[\'"]+[^>]*', 'gi' );
+    var rst = reg.exec( str );
+    if ( rst && rst[ 0 ] ) {
+      var res = /content\s*=\s*['"]([^">]+)/gi.exec( rst[ 0 ] );
+      if ( res && res[ 1 ] ) {
+        return res[ 1 ];
+      }
+    }
+
+    return "";
+  }
+
+  var parseUrl = ( req, parseBody = false ) => {
     var url = cleanUrl( req.prerender.url );
     var myUrl = URL.parse( url, true, true );
 
@@ -118,18 +137,38 @@ module.exports = ( options ) => {
     if ( /\/(article|recipe|recipevideo)\//gi.test( myUrl.pathname ) ) {
       expireDays = 14;
     }
-    // console.log( myUrl );
 
-    return {
+    // console.log( myUrl );
+    var value = {
       url: url,
       createAt: ( new Date() ).getTime(),
       expAt: ( new Date( date.setTime( date.getTime() + expireDays * 86400000 ) ) ).getTime(),
       hostname: myUrl.hostname,
       pathname: myUrl.pathname,
       query: myUrl.query,
-      hash: myUrl.hash,
-      body: req.prerender.documentHTML
+      hash: myUrl.hash
+    };
+
+    if ( parseBody ) {
+      var body = req.prerender.documentHTML.toString();
+      // parse body, title, description, image, and content text
+      try {
+        value.title = extractTitle( body );
+        value.description = extractMeta( 'description', body );
+        value.image = extractMeta( 'image', body );
+        value.content = sanitizeHtml( body, {
+          allowedTags: [ 'b', 'i', 'em', 'strong', 'a', 'title', 'span' ],
+          allowedAttributes: {
+            '*': [ 'href', 'title', 'content', 'alt' ]
+          }
+        } );
+      } catch ( e ) {
+        console.log( 'escache parse body error: ', e );
+      }
+      value.body = body;
     }
+
+    return value;
   }
 
   var my_cache = {
@@ -155,22 +194,6 @@ module.exports = ( options ) => {
     },
     set: function ( key, value, callback ) {
       var esurl = opts.esUrl.replace( /\/$/gi, '' ) + '/1seo/prerender/' + new Buffer( key ).toString( 'base64' );
-
-      // parse body, title, description, image, and content text
-      try {
-        var body = value.body.toString();
-        value.title = extractMeta( 'title', body );
-        value.description = extractMeta( 'description', body );
-        value.image = extractMeta( 'image', body );
-        value.content = sanitizeHtml( body, {
-          allowedTags: [ 'b', 'i', 'em', 'strong', 'a', 'title', 'span' ],
-          allowedAttributes: {
-            '*': [ 'href', 'title', 'content', 'alt' ]
-          }
-        } );
-      } catch ( e ) {
-        console.log( 'escache parse body error: ', e );
-      }
 
       var payload = {
         url: esurl + '/_update',
@@ -208,7 +231,7 @@ module.exports = ( options ) => {
         return next();
       }
 
-      var v = parseBody( req );
+      var v = parseUrl( req, false );
       this.cache.get( v.url, ( err, result ) => {
         if ( !err && result && result.expAt > ( new Date() ).getTime() ) {
           console.log( 'cache hit' );
@@ -224,7 +247,7 @@ module.exports = ( options ) => {
         return next();
       }
 
-      var v = parseBody( req );
+      var v = parseUrl( req, true );
       this.cache.set( v.url, v, next );
     }
   };
