@@ -41,11 +41,6 @@ server.use( prerender.httpHeaders() );
 server.use( stripHtml );
 server.use( escache() );
 
-if ( process.env.REDIS_URL ) {
-  server.use( require( 'prerender-redis-cache' ) );
-}
-
-
 server.start();
 
 const shutdown = () => {
