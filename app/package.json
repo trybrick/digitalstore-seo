@@ -1,0 +1,24 @@
+{
+  "name": "docker-prerender-redis",
+  "version": "1.0.0",
+  "description": "Dockerfile to build the prerender container image",
+  "main": "server.js",
+  "dependencies": {
+    "html-minifier": "^3.2.3",
+    "prerender": "4.4.1",
+    "prerender-redis-cache": "^0.1.6",
+    "sanitize-html": "^1.14.1",
+    "request": "^2.81.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/trybrick/digitalstore-seo.git"
+  },
+  "license": "UNLICENSED"
+}
