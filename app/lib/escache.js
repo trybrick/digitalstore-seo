@@ -15,7 +15,7 @@ curl -XPUT http://elasticsearch.example.com/_template/1seo -d '
   "mappings": {
     "prerender": {
       "_ttl": {
-        "default": "90d",
+        "default": "30d",
         "enabled": true
       },
       "_source": {
@@ -97,6 +97,18 @@ module.exports = ( options ) => {
     return url.replace( /[\?#]*$/gi, '' );
   };
 
+  var extractMeta = ( name, str ) => {
+    var reg = new RegExp( '<meta(?: [^>]+)?\s*=\s*[\'"]+' + 'image' + '[\'"]+[^>]*', 'gi' );
+    var rst = reg.exec( str );
+    if ( rst[ 0 ] ) {
+      var res = /content\s*=\s*['"]([^'">]+)/gi.exec( rst[ 0 ] );
+      if ( rest[ 1 ] ) {
+        return res[ 1 ];
+      }
+    }
+    return "";
+  }
+
   var parseBody = ( req ) => {
     var url = cleanUrl( req.prerender.url );
     var myUrl = URL.parse( url, true, true );
@@ -144,12 +156,21 @@ module.exports = ( options ) => {
     set: function ( key, value, callback ) {
       var esurl = opts.esUrl.replace( /\/$/gi, '' ) + '/1seo/prerender/' + new Buffer( key ).toString( 'base64' );
 
-      value.content = sanitizeHtml( value.body.toString(), {
-        allowedTags: [ 'b', 'i', 'em', 'strong', 'a', 'title', 'span' ],
-        allowedAttributes: {
-          '*': [ 'href', 'title', 'content', 'alt' ]
-        }
-      } );
+      // parse body, title, description, image, and content text
+      try {
+        var body = value.body.toString();
+        value.title = extractMeta( 'title', body );
+        value.description = extractMeta( 'description', body );
+        value.image = extractMeta( 'image', body );
+        value.content = sanitizeHtml( body, {
+          allowedTags: [ 'b', 'i', 'em', 'strong', 'a', 'title', 'span' ],
+          allowedAttributes: {
+            '*': [ 'href', 'title', 'content', 'alt' ]
+          }
+        } );
+      } catch ( e ) {
+        console.log( 'escache parse body error: ', e );
+      }
 
       var payload = {
         url: esurl + '/_update',
