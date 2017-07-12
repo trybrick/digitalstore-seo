@@ -76,7 +76,7 @@ module.exports = ( options ) => {
 
   opts.paramsToIgnore = opts.paramsToIgnore || process.env.PARAMS_TO_IGNORE;
 
-  var paramsToIgnore = opts.paramsToIgnore ? opts.paramsToIgnore.split( ' ' ) : [ 'siteid', 'sfs' ];
+  var paramsToIgnore = opts.paramsToIgnore ? opts.paramsToIgnore.split( ' ' ) : [ 'siteid', 'sfs', 'q' ];
 
   var cleanUrl = ( url ) => {
     var urlparts = url.split( '?' );
