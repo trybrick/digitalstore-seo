@@ -5,6 +5,7 @@ var sanitizeHtml = require( 'sanitize-html' );
 
 /* 
 // note: in elasticsearch 5, _ttl is deprecated, cronjob delete_by_query with createAt
+// also change all "string" type to "text"
 
 curl -XPUT http://elasticsearch.example.com/_template/1seo -d '
 {
@@ -25,7 +26,7 @@ curl -XPUT http://elasticsearch.example.com/_template/1seo -d '
       },
       "properties": {
         "url": {
-          "index": "not_analyzed",
+          "index": "no",
           "type": "string"
         },
         "createAt": {
@@ -49,7 +50,8 @@ curl -XPUT http://elasticsearch.example.com/_template/1seo -d '
         },
         "body": {
           "type": "string",
-          "index": "not_analyzed"
+          "index": "no",
+          "ignore_above": 20
         },
         "content": {
           "type": "string"
@@ -127,6 +129,7 @@ module.exports = ( options ) => {
         method: 'GET'
       }, ( err, res, resBody ) => {
         if ( err ) {
+          // console.log( "error:" + err )
           return callback( err );
         }
 
@@ -134,6 +137,7 @@ module.exports = ( options ) => {
           resBody = JSON.parse( resBody );
         }
 
+        // console.log( 'hit', resBody );
         callback( null, resBody._source );
       } );
     },
