@@ -156,12 +156,22 @@ module.exports = ( options ) => {
         value.title = extractTitle( body );
         value.description = extractMeta( 'description', body );
         value.image = extractMeta( 'image', body );
-        value.content = sanitizeHtml( body, {
-          allowedTags: [ 'b', 'i', 'em', 'strong', 'a', 'title', 'span' ],
+        var content = sanitizeHtml( body, {
+          allowedTags: [ 'b', 'i', 'em', 'strong', 'a' ],
           allowedAttributes: {
             '*': [ 'href', 'title', 'content', 'alt' ]
           }
         } );
+
+        content = content.replace( /<[^\/>][^>]*>\s*<\/[^>]+>/gi, "" ); // strip empty tags
+        content = content.replace( /<[^\/>][^>]*>\s*<\/[^>]+>/gi, "" ); // 2nd filter for nested tags
+
+        // remove all invalid spacing
+        content = content.replace( /\t|\r|\f/g, '' );
+
+        // collapse space/newlines into single
+        content = content.replace( / {2,}/g, ' ' ).replace( /\n\s*\n+\s*/g, '\n' );
+        value.content = content.replace( /\n+/g, '\n' );
       } catch ( e ) {
         console.log( 'escache parse body error: ', e );
       }

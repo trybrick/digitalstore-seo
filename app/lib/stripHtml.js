@@ -6,9 +6,9 @@ const options = {
   minifyJS: true,
   removeComments: true,
   collapseWhitespace: true,
-  preserveLineBreaks: true,
-  removeEmptyAttributes: false,
-  removeEmptyElements: false,
+  preserveLineBreaks: false,
+  removeEmptyAttributes: true,
+  removeEmptyElements: true,
 };
 
 module.exports = {
@@ -27,7 +27,8 @@ module.exports = {
     msg = msg.replace( /<!--begin:seoxclude3[+\s\S]+<!--end:seoxclude3-->/gi, '' );
     msg = msg.replace( /<!--begin:seoxclude4[+\s\S]+<!--end:seoxclude4-->/gi, '' );
     msg = msg.replace( /<!--begin:seoxclude5[+\s\S]+<!--end:seoxclude5-->/gi, '' );
-    req.prerender.documentHTML = minify( msg, options );
+    msg = minify( msg, options );
+    req.prerender.documentHTML = msg;
     const sizeAfter = req.prerender.documentHTML.toString().length;
 
     res.setHeader( COMPRESSION_HEADER, ( ( sizeBefore - sizeAfter ) / sizeBefore ).toFixed( 4 ) );

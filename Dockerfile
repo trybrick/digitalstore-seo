@@ -1,6 +1,6 @@
 FROM node:6
 
-MAINTAINER friends@niiknow.org
+MAINTAINER tnguyen@trybrick.com
 
 ENV NPM_CONFIG_LOGLEVEL warn
 
