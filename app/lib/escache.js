@@ -253,7 +253,7 @@ module.exports = ( options ) => {
     },
 
     beforeSend: ( req, res, next ) => {
-      if ( req.prerender.statusCode !== 200 ) {
+      if ( req.prerender.statusCode !== 200 || req.prerender.ignore ) {
         return next();
       }
 
