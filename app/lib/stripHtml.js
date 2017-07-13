@@ -6,9 +6,9 @@ const options = {
   minifyJS: true,
   removeComments: true,
   collapseWhitespace: true,
-  preserveLineBreaks: false,
+  preserveLineBreaks: true,
   removeEmptyAttributes: true,
-  removeEmptyElements: true,
+  removeEmptyElements: true
 };
 
 module.exports = {

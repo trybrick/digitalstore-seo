@@ -163,8 +163,8 @@ module.exports = ( options ) => {
           }
         } );
 
-        content = content.replace( /<[^\/>][^>]*>\s*<\/[^>]+>/gi, "" ); // strip empty tags
-        content = content.replace( /<[^\/>][^>]*>\s*<\/[^>]+>/gi, "" ); // 2nd filter for nested tags
+        content = content.replace( /<[^\/>][^>]*>\s*<\/[^>]+>/gi, '' ); // strip empty tags
+        content = content.replace( /<[^\/>][^>]*>\s*<\/[^>]+>/gi, '' ); // 2nd filter for nested tags
 
         // remove all invalid spacing
         content = content.replace( /\t|\r|\f/g, '' );
