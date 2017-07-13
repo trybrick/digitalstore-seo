@@ -5,10 +5,10 @@ const options = {
   minifyCSS: true,
   minifyJS: true,
   removeComments: true,
-  collapseWhitespace: true,
+  collapseWhitespace: false,
   preserveLineBreaks: true,
   removeEmptyAttributes: true,
-  removeEmptyElements: true
+  removeEmptyElements: true,
 };
 
 module.exports = {
