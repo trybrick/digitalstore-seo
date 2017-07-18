@@ -132,10 +132,10 @@ module.exports = ( options ) => {
     var url = cleanUrl( req.prerender.url );
     var myUrl = URL.parse( url, true, true );
 
-    var expireDays = 3;
+    var expireDays = 0.5;
     var date = new Date();
     if ( /\/(article|recipe|recipevideo)\//gi.test( myUrl.pathname ) ) {
-      expireDays = 14;
+      expireDays = 30;
     }
 
     // console.log( myUrl );
