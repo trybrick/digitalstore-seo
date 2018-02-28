@@ -132,7 +132,7 @@ module.exports = ( options ) => {
     var url = cleanUrl( req.prerender.url );
     var myUrl = URL.parse( url, true, true );
 
-    var expireDays = 0.5; // default to 12 hours - example same day circular
+    var expireDays = 0.25; // default to 6 hours - example same day circular
     var date = new Date();
 
     // set different expire for permanent pages
