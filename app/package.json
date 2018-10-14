@@ -4,10 +4,10 @@
   "description": "Dockerfile to build the prerender container image",
   "main": "server.js",
   "dependencies": {
-    "html-minifier": "^3.2.3",
+    "html-minifier": "^3.5.20",
     "prerender": "4.4.1",
-    "sanitize-html": "^1.14.1",
-    "request": "^2.81.0"
+    "sanitize-html": "^1.19.1",
+    "request": "^2.88.0"
   },
   "devDependencies": {},
   "scripts": {
