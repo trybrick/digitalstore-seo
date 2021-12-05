@@ -1,4 +1,4 @@
-FROM node:8
+FROM node:16
 LABEL maintainer="tnguyen@trybrick.com"
 ENV NPM_CONFIG_LOGLEVEL warn
 EXPOSE 3000
