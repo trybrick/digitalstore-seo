@@ -27,7 +27,11 @@ module.exports = {
     msg = msg.replace( /<!--begin:seoxclude3[+\s\S]+<!--end:seoxclude3-->/gi, '' );
     msg = msg.replace( /<!--begin:seoxclude4[+\s\S]+<!--end:seoxclude4-->/gi, '' );
     msg = msg.replace( /<!--begin:seoxclude5[+\s\S]+<!--end:seoxclude5-->/gi, '' );
-    msg = minify( msg, options );
+    try {
+      msg = minify( msg, options );
+    } catch(ex) {
+      // do nothing
+    }
     req.prerender.documentHTML = msg;
     const sizeAfter = req.prerender.documentHTML.toString().length;
 
