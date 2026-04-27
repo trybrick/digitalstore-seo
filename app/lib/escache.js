@@ -185,7 +185,7 @@ module.exports = ( options ) => {
 
   var my_cache = {
     get: function ( key, callback ) {
-      var esurl = opts.esUrl.replace( /\/$/gi, '' ) + '/1seo/prerender/' + new Buffer( key ).toString( 'base64' );
+      var esurl = opts.esUrl.replace( /\/$/gi, '' ) + '/1seo/' + new Buffer( key ).toString( 'base64' );
 
       request( {
         url: esurl,
@@ -205,7 +205,7 @@ module.exports = ( options ) => {
       } );
     },
     set: function ( key, value, callback ) {
-      var esurl = opts.esUrl.replace( /\/$/gi, '' ) + '/1seo/prerender/' + new Buffer( key ).toString( 'base64' );
+      var esurl = opts.esUrl.replace( /\/$/gi, '' ) + '/1seo/' + new Buffer( key ).toString( 'base64' );
 
       var payload = {
         url: esurl + '/_update',
