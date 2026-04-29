@@ -1,6 +1,7 @@
 FROM node:24
 EXPOSE 3000
 RUN apt-get update && apt-get upgrade -y \
+    && apt-get install nano \
     && mkdir -p /usr/src/app/lib \
     && groupadd -r prerender && useradd -r -g prerender -d /usr/src/app prerender \
     && chown prerender:prerender /usr/src/app \

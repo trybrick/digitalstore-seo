@@ -185,7 +185,7 @@ module.exports = ( options ) => {
 
   var my_cache = {
     get: function ( key, callback ) {
-      var esurl = opts.esUrl.replace( /\/$/gi, '' ) + '/1seo/' + new Buffer( key ).toString( 'base64' );
+      var esurl = opts.esUrl.replace( /\/$/gi, '' ) + '/1seo/_doc/' + new Buffer( key ).toString( 'base64' );
 
       request( {
         url: esurl,
@@ -205,10 +205,10 @@ module.exports = ( options ) => {
       } );
     },
     set: function ( key, value, callback ) {
-      var esurl = opts.esUrl.replace( /\/$/gi, '' ) + '/1seo/' + new Buffer( key ).toString( 'base64' );
+      var esurl = opts.esUrl.replace( /\/$/gi, '' ) + '/1seo/_update/' + new Buffer( key ).toString( 'base64' );
 
       var payload = {
-        url: esurl + '/_update',
+        url: esurl,
         method: 'POST',
         json: {
           'doc': value,
